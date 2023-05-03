@@ -1,0 +1,2 @@
+from pymeasure import Instrument
+

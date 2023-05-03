@@ -1,0 +1,11 @@
+# pyproject.toml
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qsource3"
+dynamic = ["version"]
+
+[tool.setuptools_scm]
+# write_to = "janascard-qsource3/_version.py"
