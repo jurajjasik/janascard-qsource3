@@ -2,6 +2,7 @@ import numpy as np
 from scipy import interpolate
 from pymeasure.instruments import Instrument
 from qsource3.qsource3driver import QSource3Driver
+from qsource3.qsource3 import QSource3
 
 
 def interp_fnc(xy):
@@ -28,29 +29,26 @@ def interp_fnc(xy):
     return lambda v: np.zeros_like(v)
 
 
-class Quadrupole(Instrument):
+class Quadrupole(QSource3):
     def __init__(
         self,
-        rf_generator: QSource3,
         frequency,
         r0,
+        driver: QSource3Driver,
         calib_pnts_rf=[],
         calib_pnts_dc=[],
-        name="",
+        name="Quadrupole",
         **kwargs
     ):
-        super().__init__(adapter=None, name=name, **kwargs)
-        self._gen = rf_generator
+        super().__init__(driver=driver, name=name, **kwargs)
 
         self.calib_pnts_rf = calib_pnts_rf
         self.calib_pnts_dc = calib_pnts_dc
 
         self._mz = None
-        self._dc1 = None
-        self._dc2 = None
-        self._rfAmp = None
-        self._polarity = True  # rods polarity
-        self._dcOn = True  #  True => mass filter, False => ion guide
+
+        self._is_rod_polarity_positive = True  # rods polarity
+        self._is_dc_on = True  #  True => mass filter, False => ion guide
 
         """
          RF_amp = _rfFactor * (m/z)
@@ -60,7 +58,7 @@ class Quadrupole(Instrument):
         self._rfFactor = 7.22176e-8 * (r0 * frequency) ** 2
 
         """
-        1/2 * a0/q0 - theoretical value for infinity resolution
+        1/2 * a0/q0 = 0.16784 - theoretical value for infinity resolution
         """
         self._dcFactor = 0.16784 * self._rfFactor
 
@@ -104,6 +102,26 @@ class Quadrupole(Instrument):
         self.set_uv(U, V)
         _mz = mz
 
+    @property
+    def is_rod_polarity_positive(self):
+        return self._is_rod_polarity_positive
+
+    @is_rod_polarity_positive.setter
+    def is_rod_polarity_positive(self, v):
+        if v != self._is_rod_polarity_positive:
+            self._is_rod_polarity_positive = v
+            self.dc_diff = -self.dc_diff
+
+    @property
+    def is_dc_on(self):
+        return self._is_dc_on
+
+    @is_dc_on.setter
+    def is_dc_on(self, v):
+        if v != self._is_dc_on:
+            self._is_dc_on = v
+            self.mz = self.mz  # reset mz => set correct DC voltages
+
     def calc_rf(self, mz):
         return self._rfFactor * (1.0 + interp(mz, self._calib_pnts_rf)) * mz
 
@@ -115,12 +133,12 @@ class Quadrupole(Instrument):
         dc2 = self.dc_offst
         
         if self.is_dc_on:
-            if self.polarity:
+            if self.is_rod_polarity_positive:
                 dc1 += u
                 dc2 -= u
             else:
                 dc1 -= u
                 dc2 += u
         
-        self.set_voltages(self.rf_amp, dc1, dc2)
+        self.set_voltages(dc1, dc2, v)
     
