@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import interpolate
+import scipy.constants as sc
 from pymeasure.instruments import Instrument
 from qsource3.qsource3driver import QSource3Driver
 from qsource3.qsource3 import QSource3
@@ -55,7 +56,13 @@ class Quadrupole(QSource3):
         _rfFactor = q0 * pi**2 * (r0 * frequency)**2
          q0 = 0.706
         """
-        self._rfFactor = 7.22176e-8 * (r0 * frequency) ** 2
+        self._rfFactor = (
+            0.706
+            * sc.pi**2
+            * sc.atomic_mass
+            / sc.elementary_charge
+            * (r0 * frequency) ** 2
+        )
 
         """
         1/2 * a0/q0 = 0.16784 - theoretical value for infinity resolution
@@ -141,4 +148,8 @@ class Quadrupole(QSource3):
                 dc2 += u
         
         self.set_voltages(dc1, dc2, v)
+
+    @property
+    def max_mz(self):
+        return self._driver.MAX_RF_AMP_PP / 2 / self._rfFactor
     

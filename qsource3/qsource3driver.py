@@ -3,7 +3,7 @@ from pymeasure.instruments.validators import truncated_range, strict_discrete_se
 
 
 class QSource3Driver(Instrument):
-    MAX_RF_AMP = 650.0  # Volts peak-to-peak
+    MAX_RF_AMP_PP = 650.0  # Volts peak-to-peak
     MAX_DC = 75.0  # Volts
     
     def __init__(self, adapter, name="QSource3Driver", **kwargs):
@@ -76,7 +76,9 @@ class QSource3Driver(Instrument):
         Resolution: 16 bits => real resolution is 9.4 mV.
         The values out of range are truncated.
         """
-        v = int(round(truncated_range(ac, [0, self.MAX_RF_AMP]) * 1000.0))  # convert to mV
+        v = int(
+            round(truncated_range(ac, [0, self.MAX_RF_AMP_PP]) * 1000.0)
+        )  # convert to mV
         self._ask_ok(f"#AC {v}")
 
     ac = property(
@@ -95,9 +97,15 @@ class QSource3Driver(Instrument):
         param dc2: DC voltage of channel 2 in Volts (float from -75 to +75).
         param ac: AC voltage with peak to peak value in Volts (float from 0 to +650).
         """
-        _dc1 = int(round(truncated_range(dc1, [-self.MAX_DC, self.MAX_DC]) * 1000.0))  # convert to mV
-        _dc2 = int(round(truncated_range(dc2, [-self.MAX_DC, self.MAX_DC]) * 1000.0))  # convert to mV
-        _ac = int(round(truncated_range(ac, [0, self.MAX_RF_AMP]) * 1000.0))  # convert to mV
+        _dc1 = int(
+            round(truncated_range(dc1, [-self.MAX_DC, self.MAX_DC]) * 1000.0)
+        )  # convert to mV
+        _dc2 = int(
+            round(truncated_range(dc2, [-self.MAX_DC, self.MAX_DC]) * 1000.0)
+        )  # convert to mV
+        _ac = int(
+            round(truncated_range(ac, [0, self.MAX_RF_AMP_PP]) * 1000.0)
+        )  # convert to mV
         self._ask_ok(f"#C {_dc1} {_dc2} {_ac}")
 
     voltages = property(
