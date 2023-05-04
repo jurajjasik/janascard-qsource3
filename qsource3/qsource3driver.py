@@ -2,8 +2,8 @@ from pymeasure.instruments import Instrument
 from pymeasure.instruments.validators import truncated_range, strict_discrete_set
 
 
-class QSource3(Instrument):
-    def __init__(self, adapter, name="QSource3", **kwargs):
+class QSource3Driver(Instrument):
+    def __init__(self, adapter, name="QSource3Driver", **kwargs):
         super().__init__(
             adapter,
             name,
