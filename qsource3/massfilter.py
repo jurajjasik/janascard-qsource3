@@ -8,7 +8,7 @@ from qsource3.qsource3 import QSource3
 
 def interp_fnc(xy):
     """
-    Create function interpolaing points
+    Create function interpolaing points.
 
     :param xy: 2D array [[x0, y0], [x1, y1], ...]
     """
@@ -31,10 +31,15 @@ def interp_fnc(xy):
 
 
 class Quadrupole(QSource3):
+    """
+    Represents quadrupole mass filter high-level class.
+
+    Owns QSource3Driver.
+    """
     def __init__(
         self,
-        frequency,
-        r0,
+        frequency: float,
+        r0: float,
         driver: QSource3Driver,
         calib_pnts_rf=[],
         calib_pnts_dc=[],
@@ -51,11 +56,9 @@ class Quadrupole(QSource3):
         self._is_rod_polarity_positive = True  # rods polarity
         self._is_dc_on = True  #  True => mass filter, False => ion guide
 
-        """
-         RF_amp = _rfFactor * (m/z)
-        _rfFactor = q0 * pi**2 * (r0 * frequency)**2
-         q0 = 0.706
-        """
+        # RF_amp = _rfFactor * (m/z)
+        # _rfFactor = q0 * pi**2 * (r0 * frequency)**2
+        # q0 = 0.706
         self._rfFactor = (
             0.706
             * sc.pi**2
@@ -64,9 +67,7 @@ class Quadrupole(QSource3):
             * (r0 * frequency) ** 2
         )
 
-        """
-        1/2 * a0/q0 = 0.16784 - theoretical value for infinity resolution
-        """
+        # 1/2 * a0/q0 = 0.16784 - theoretical value for infinity resolution
         self._dcFactor = 0.16784 * self._rfFactor
 
     @property

@@ -3,6 +3,13 @@ from pymeasure.instruments.validators import truncated_range, strict_discrete_se
 
 
 class QSource3Driver(Instrument):
+    """
+    Communication driver for QSource3 device.
+
+    :param adapter: A communication port
+    :param name: A name
+    """
+
     MAX_RF_AMP_PP = 650.0  # Volts peak-to-peak
     MAX_DC = 75.0  # Volts
     
@@ -93,9 +100,9 @@ class QSource3Driver(Instrument):
         """
         Set DC and AC voltages.
 
-        param dc1: DC voltage of channel 1 in Volts (float from -75 to +75).
-        param dc2: DC voltage of channel 2 in Volts (float from -75 to +75).
-        param ac: AC voltage with peak to peak value in Volts (float from 0 to +650).
+        :param dc1: DC voltage of channel 1 in Volts (float from -75 to +75).
+        :param dc2: DC voltage of channel 2 in Volts (float from -75 to +75).
+        :param ac: AC voltage with peak to peak value in Volts (float from 0 to +650).
         """
         _dc1 = int(
             round(truncated_range(dc1, [-self.MAX_DC, self.MAX_DC]) * 1000.0)
@@ -114,16 +121,18 @@ class QSource3Driver(Instrument):
         doc="""
         Set DC and AC voltages.
 
-        param dc1: DC voltage of channel 1 in Volts (float from -75 to +75).
-        param dc2: DC voltage of channel 2 in Volts (float from -75 to +75).
-        param ac: AC voltage with peak to peak value in Volts (float from 0 to +650).
+        :param dc1: DC voltage of channel 1 in Volts (float from -75 to +75).
+        :param dc2: DC voltage of channel 2 in Volts (float from -75 to +75).
+        :param ac: AC voltage with peak to peak value in Volts (float from 0 to +650).
         """,
     )
 
     def set_frequency(self, frequency):
+        """ """
         self._ask_ok(f"#F {int(round(frequency / 100.0))}")
 
     def get_frequency(self):
+        """ """
         response = self.ask("#G")
         return float(response) * 100
 
@@ -142,6 +151,7 @@ class QSource3Driver(Instrument):
     )
 
     def set_range(self, range):
+        """ """
         _range = strict_discrete_set(range, [0, 1, 2])
         self._ask_ok(f"#B {_range}")
 

@@ -3,6 +3,13 @@ from qsource3.qsource3driver import QSource3Driver
 
 
 class QSource3(Instrument):
+    """
+    Represents QSource3 RF generator.
+
+    Owns QSource3Driver. Keeps track with set voltages. Provides DC offset and DC difference manipulation.
+
+    :param driver: driver class for communication with QSource3 device.
+    """
     def __init__(self, driver: QSource3Driver, name="QSource3", **kwargs):
         super().__init__(adapter=None, name=name, **kwargs)
         self._driver = driver
@@ -11,7 +18,14 @@ class QSource3(Instrument):
         self._dc2 = None
         self._rf = None
 
-    def set_voltages(dc1, dc2, rf):
+    def set_voltages(self, dc1: float, dc2: float, rf: float):
+        """
+        Set DC voltages and RF amplitude simultaneosly.
+
+        :param dc1: DC1 voltage
+        :param dc2: DC2 voltage
+        :param rf: rf voltage (peak-to-peak)
+        """
         self._driver.set_voltages(dc1, dc2, rf)
         self._dc1 = dc1
         self._dc2 = dc2
