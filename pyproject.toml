@@ -6,6 +6,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "qsource3"
 dynamic = ["version"]
+dependencies = [
+    "scipy",
+    "pymeasure",
+]
 
 [tool.setuptools_scm]
 # write_to = "janascard-qsource3/_version.py"
