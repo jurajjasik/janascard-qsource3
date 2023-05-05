@@ -45,3 +45,5 @@ html_static_path = ['_static']
 
 # Automatically mock optional packages
 autodoc_mock_imports = ["pymeasure"]
+
+master_doc = 'index'
