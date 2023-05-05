@@ -1,2 +1,2 @@
 sphinx
-autoapi.extension
+sphinx.autoapi.extension
