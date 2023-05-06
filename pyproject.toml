@@ -9,7 +9,7 @@ dynamic = ["version"]
 dependencies = [
     "scipy",
     "pymeasure",
-    "autoapi",
+    "sphinx-autoapi",
 ]
 
 [tool.setuptools_scm]
