@@ -4,16 +4,42 @@
 #
 #    pip-compile
 #
+alabaster==0.7.13
+    # via sphinx
+autoapi==2.0.1
+    # via qsource3 (pyproject.toml)
+babel==2.12.1
+    # via sphinx
+certifi==2022.12.7
+    # via requests
+charset-normalizer==3.1.0
+    # via requests
+colorama==0.4.6
+    # via sphinx
+docutils==0.19
+    # via sphinx
+idna==3.4
+    # via requests
+imagesize==1.4.1
+    # via sphinx
+jinja2==3.1.2
+    # via sphinx
+markupsafe==2.1.2
+    # via jinja2
 numpy==1.24.3
     # via
     #   pandas
     #   pymeasure
     #   pyqtgraph
     #   scipy
+packaging==23.1
+    # via sphinx
 pandas==2.0.1
     # via pymeasure
 pint==0.21
     # via pymeasure
+pygments==2.15.1
+    # via sphinx
 pymeasure==0.11.1
     # via qsource3 (pyproject.toml)
 pyqtgraph==0.13.3
@@ -26,11 +52,31 @@ pytz==2023.3
     # via pandas
 pyvisa==1.13.0
     # via pymeasure
+requests==2.30.0
+    # via sphinx
 scipy==1.10.1
     # via qsource3 (pyproject.toml)
 six==1.16.0
     # via python-dateutil
+snowballstemmer==2.2.0
+    # via sphinx
+sphinx==7.0.0
+    # via autoapi
+sphinxcontrib-applehelp==1.0.4
+    # via sphinx
+sphinxcontrib-devhelp==1.0.2
+    # via sphinx
+sphinxcontrib-htmlhelp==2.0.1
+    # via sphinx
+sphinxcontrib-jsmath==1.0.1
+    # via sphinx
+sphinxcontrib-qthelp==1.0.3
+    # via sphinx
+sphinxcontrib-serializinghtml==1.1.5
+    # via sphinx
 typing-extensions==4.5.0
     # via pyvisa
 tzdata==2023.3
     # via pandas
+urllib3==2.0.2
+    # via requests
