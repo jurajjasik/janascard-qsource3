@@ -21,11 +21,13 @@ author = 'Juraj Jasik'
 extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
-    # 'sphinx.ext.autosummary',
+    'sphinx.ext.autosummary',
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
-    "autoapi.extension",
+    # "autoapi.extension",
 ]
+
+autosummary_generate_overwrite = False
 
 autodoc_typehints = "description"
 

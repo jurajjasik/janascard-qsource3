@@ -6,30 +6,16 @@
 Welcome to janascard-qsource3's documentation!
 ==============================================
 
-*janascard-qsource3* is a Python library for controlling quadrupole mass filter 
-RF generator QSource3 by Janascard. 
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+*janascard-qsource3* is a Python library for controlling quadrupole mass filter
+RF generator QSource3 by Janascard.
 
 Contents
 --------
 
 .. toctree::
-
    usage
+   api
 
 .. note::
 
    This project is under active development.
-   
