@@ -8,9 +8,18 @@ from qsource3.qsource3 import QSource3
 
 def interp_fnc(xy):
     """
-    Create function interpolaing points.
+    Create function f(x) interpolaing points (x\ :sub:`0`, y\ :sub:`0`), (x\ :sub:`1`, y\ :sub:`1`), ... .
 
-    :param xy: 2D array [[x0, y0], [x1, y1], ...]
+    - f(x) = y\ :sub:`0` for xy = [[x0, y0]]
+    - f(x) = y\ :sub:`0` + (y\ :sub:`1` - y\ :sub:`0`) / (x\ :sub:`1` - x\ :sub:`0`) * x
+      for xy = [[x\ :sub:`0`, y\ :sub:`0`], [x\ :sub:`1`, y\ :sub:`1`]]
+    - f(x) is  `quadratic spline interpolation function
+      <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d>`_
+      for higher number of xy points
+    - f(x) = 0 otherwise
+
+    :param xy: 2D array [[x\ :sub:`0`, y\ :sub:`0`], [x\ :sub:`1`, y\ :sub:`1`], ...]
+    :returns: 1D function
     """
     array = np.array(xy)
 
@@ -34,7 +43,13 @@ class Quadrupole(QSource3):
     """
     Represents quadrupole mass filter high-level class.
 
-    Owns QSource3Driver.
+    Owns instance of :class:`qsource3.qsource3driver.QSource3Driver`.
+    
+    :param frequency: RF frequency of the quadrupole in Hertz
+    :param r0: characteristic radius of the quadrupole in meters
+    :param driver: instance of :class:`qsource3.qsource3driver.QSource3Driver`
+    :param calib_pnts_rf: calibration points for RF amplitude (m/z calibration), optional
+    :param calib_pnts_dc: calibration points for DC difference (resolution), optional
     """
     def __init__(
         self,
@@ -72,6 +87,15 @@ class Quadrupole(QSource3):
 
     @property
     def calib_pnts_rf(self):
+        """
+        Calibration points for RF amplitude (m/z calibration). 
+        
+        :getter: Get copy of calibration points as 2D numpy array
+        :setter: Set calibration points and create a new :attr:`interp_fnc_calib_pnts_rf` method
+        :type: 2D array [[(m/z)\ :sub:`0`, y\ :sub:`0`], [(m/z)\ :sub:`1`, y\ :sub:`1`], ...]
+        
+        The points are interpolated using :attr:`interp_fnc`.
+        """
         return np.copy(self._calib_pnts_rf)
 
     @calib_pnts_rf.setter
@@ -79,11 +103,25 @@ class Quadrupole(QSource3):
         self._calib_pnts_rf = np.array(xy)
         self._interp_fnc_calib_pnts_rf = interp_fnc(self._calib_pnts_rf)
 
-    def interp_fnc_calib_pnts_rf(self, mz):
+    def interp_fnc_calib_pnts_rf(self, mz:float)->float:
+        """
+        Calculate a correction factor to RF amplitude for given m/z.
+        
+        :param mz: m/z
+        """
         return self._interp_fnc_calib_pnts_rf(mz)
 
     @property
     def calib_pnts_dc(self):
+        """
+        Calibration points for DC difference (resolution). 
+        
+        :getter: Get copy of calibration points as 2D numpy array
+        :setter: Set calibration points and create a new :attr:`interp_fnc_calib_pnts_dc` method
+        :type: 2D array [[(m/z)\ :sub:`0`, y\ :sub:`0`], [(m/z)\ :sub:`1`, y\ :sub:`1`], ...]
+        
+        The points are interpolated using :attr:`interp_fnc`.
+        """
         return np.copy(self._calib_pnts_dc)
 
     @calib_pnts_dc.setter
@@ -92,17 +130,30 @@ class Quadrupole(QSource3):
         self._interp_fnc_calib_pnts_dc = interp_fnc(self._calib_pnts_dc)
 
     def interp_fnc_calib_pnts_dc(self, mz):
+        """
+        Calculate a correction factor to DC difference for given m/z.
+        
+        :param mz: m/z
+        """
         return self._interp_fnc_calib_pnts_dc(mz)
 
     @property
-    def mz(self):
+    def mz(self)->float:
+        """
+        m/z
+        
+        :getter: Last value of m/z
+        :setter: Set RF amplitude and DC difference according to given m/z and internal state (
+                 :attr:`is_dc_on`,
+                 :attr:`is_rod_polarity_positive`,
+                 :attr:`calib_pnts_dc`,
+                 :attr:`interp_fnc_calib_pnts_rf`
+                 )
+        """
         return self._mz
 
     @mz.setter
-    def mz(self, mz):
-        """
-        Set m/z
-        """
+    def mz(self, mz:float):
         if mz < 0:
             mz = 0
         V = self.calc_rf(mz)
@@ -111,7 +162,12 @@ class Quadrupole(QSource3):
         _mz = mz
 
     @property
-    def is_rod_polarity_positive(self):
+    def is_rod_polarity_positive(self)->bool:
+        """
+        Polarity of DC difference applied to rods.
+        
+        DC offset, RF amplitude and absolute value of DC difference is preserved.
+        """
         return self._is_rod_polarity_positive
 
     @is_rod_polarity_positive.setter
@@ -122,6 +178,14 @@ class Quadrupole(QSource3):
 
     @property
     def is_dc_on(self):
+        """
+        Flag if DC difference is applied to rods.
+        
+        - True - mass filter
+        - False - ion guide
+        
+        DC offset and RF amplitude is preserved.
+        """
         return self._is_dc_on
 
     @is_dc_on.setter
