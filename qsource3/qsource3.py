@@ -4,9 +4,19 @@ from qsource3.qsource3driver import QSource3Driver
 
 class QSource3(Instrument):
     """
-    Represents QSource3 RF generator.
-
-    Owns QSource3Driver. Keeps track with set voltages. Provides DC offset and DC difference manipulation.
+    High-level class representing QSource3 RF generator.
+    
+    Outputs of the generator: 
+        :math:`{\\phi}` \ :sub:`A` = :math:`U`\ :sub:`1` + :math:`V` cos(2 :math:`{\\pi}` :math:`f`)
+        
+        :math:`{\\phi}` \ :sub:`B` = :math:`U`\ :sub:`2` - :math:`V` cos(2 :math:`{\\pi}` :math:`f`)
+        
+    where :math:`f` is frequency (in Hertz) given by actual frequency range of the ``driver``
+    (see :attr:`QSource3Driver.set_range()`).
+    Keeps track with DC voltages (:math:`U`\ :sub:`1`, :math:`U`\ :sub:`2`) and RF amplitude (:math:`V`).
+    Provides manipulation 
+    with DC offset (:math:`U`\ :sub:`ofst` = (:math:`U`\ :sub:`1` + :math:`U`\ :sub:`2`) / 2)
+    and DC difference (:math:`U`\ :sub:`diff` = (:math:`U`\ :sub:`1` - :math:`U`\ :sub:`2`) / 2).
 
     :param driver: driver class for communication with QSource3 device.
     """
@@ -22,17 +32,19 @@ class QSource3(Instrument):
         """
         Set DC voltages and RF amplitude simultaneosly.
 
-        :param dc1: DC1 voltage
-        :param dc2: DC2 voltage
-        :param rf: rf voltage (peak-to-peak)
+        :param dc1: DC voltage :math:`U`\ :sub:`1`  (in Volts)
+        :param dc2: DC voltage :math:`U`\ :sub:`2`  (in Volts)
+        :param rf: RF amplitude :math:`V` (in Volts, 0-to-peak)
         """
-        self._driver.set_voltages(dc1, dc2, rf)
+        self._driver.set_voltages(dc1, dc2, 2.0 * rf)
         self._dc1 = dc1
         self._dc2 = dc2
         self._rf = rf
 
     @property
-    def rf(self):
+    def rf(self)->float:
+        """RF amplitude :math:`V` (in Volts, 0-to-peak)
+        """
         return self._rf
 
     @rf.setter
@@ -41,7 +53,9 @@ class QSource3(Instrument):
         self._rf = v
 
     @property
-    def dc1(self):
+    def dc1(self)->float:
+        """DC voltage :math:`U`\ :sub:`1`  (in Volts)
+        """
         return self._dc1
 
     @dc1.setter
@@ -50,7 +64,9 @@ class QSource3(Instrument):
         self._dc1 = v
 
     @property
-    def dc2(self):
+    def dc2(self)->float:
+        """DC voltage :math:`U`\ :sub:`2`  (in Volts)
+        """
         return self._dc2
 
     @dc2.setter
@@ -59,7 +75,15 @@ class QSource3(Instrument):
         self._dc2 = v
 
     @property
-    def dc_offst(self):
+    def dc_offst(self)->float:
+        """DC offset :math:`U`\ :sub:`ofst` (in Volts)
+
+        :getter: return :math:`U`\ :sub:`ofst` = (:math:`U`\ :sub:`1` + :math:`U`\ :sub:`2`) / 2
+        :setter:
+            :math:`U`\ :sub:`1` := :math:`U`\ :sub:`ofst` + :math:`U`\ :sub:`diff`,
+            :math:`U`\ :sub:`2` := :math:`U`\ :sub:`ofst` - :math:`U`\ :sub:`diff`
+
+        """
         return (self.dc1 + self.dc2) / 2.0
 
     @dc_offst.setter
@@ -68,7 +92,15 @@ class QSource3(Instrument):
         self.dc2 = v - self.dc_diff
 
     @property
-    def dc_diff(self):
+    def dc_diff(self)->float:
+        """DC difference :math:`U`\ :sub:`diff` (in Volts)
+
+        :getter: return :math:`U`\ :sub:`diff` = (:math:`U`\ :sub:`1` - :math:`U`\ :sub:`2`) / 2
+        :setter:
+            :math:`U`\ :sub:`1` := :math:`U`\ :sub:`ofst` + :math:`U`\ :sub:`diff`,
+            :math:`U`\ :sub:`2` := :math:`U`\ :sub:`ofst` - :math:`U`\ :sub:`diff`
+
+        """
         return (self.dc1 - self.dc2) / 2.0
 
     @dc_diff.setter
