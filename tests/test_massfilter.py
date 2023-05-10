@@ -33,6 +33,8 @@ with expected_protocol(
         driver=driver,
         name="Q1",
     )
+    
+    assert 500.03188840522085 == pytest.approx(q.max_mz)
 
     # 1 ...
     q.mz = 100
