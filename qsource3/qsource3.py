@@ -89,8 +89,9 @@ class QSource3(Instrument):
 
     @dc_offst.setter
     def dc_offst(self, v):
-        self.dc1 = v + self.dc_diff
-        self.dc2 = v - self.dc_diff
+        diff = self.dc_diff
+        self.dc1 = v + diff
+        self.dc2 = v - diff
 
     @property
     def dc_diff(self)->float:
@@ -105,5 +106,6 @@ class QSource3(Instrument):
 
     @dc_diff.setter
     def dc_diff(self, v):
-        self.dc1 = self.dc_offst + v
-        self.dc2 = self.dc_offst - v
+        offst = self.dc_offst
+        self.dc1 = offst + v
+        self.dc2 = offst - v

@@ -96,8 +96,8 @@ class Quadrupole(QSource3):
     ):
         super().__init__(driver=driver, name=name, **kwargs)
 
-        self.calib_pnts_rf = calib_pnts_rf
-        self.calib_pnts_dc = calib_pnts_dc
+        self._set_calib_pnts_rf(calib_pnts_rf)
+        self._set_calib_pnts_dc(calib_pnts_dc)
 
         self._mz = None
 
@@ -118,6 +118,13 @@ class Quadrupole(QSource3):
         # 1/2 * a0/q0 = 0.16784 - theoretical value for infinity resolution
         self._dcFactor = 0.5 * 0.237 / 0.706
 
+        # reset voltages
+        self.set_voltages(0, 0, 0)
+
+    def _set_calib_pnts_rf(self, xy):
+        self._calib_pnts_rf = np.array(xy)
+        self._interp_fnc_calib_pnts_rf = interp_fnc(self._calib_pnts_rf)
+
     @property
     def calib_pnts_rf(self):
         r"""
@@ -135,8 +142,7 @@ class Quadrupole(QSource3):
 
     @calib_pnts_rf.setter
     def calib_pnts_rf(self, xy):
-        self._calib_pnts_rf = np.array(xy)
-        self._interp_fnc_calib_pnts_rf = interp_fnc(self._calib_pnts_rf)
+        self._set_calib_pnts_rf(xy)
 
     def interp_fnc_calib_pnts_rf(self, mz:float)->float:
         r"""
@@ -147,6 +153,10 @@ class Quadrupole(QSource3):
         :param mz: :math:`m/z`
         """
         return self._interp_fnc_calib_pnts_rf(mz)
+
+    def _set_calib_pnts_dc(self, xy):
+        self._calib_pnts_dc = np.array(xy)
+        self._interp_fnc_calib_pnts_dc = interp_fnc(self._calib_pnts_dc)
 
     @property
     def calib_pnts_dc(self):
@@ -165,8 +175,7 @@ class Quadrupole(QSource3):
 
     @calib_pnts_dc.setter
     def calib_pnts_dc(self, xy):
-        self._calib_pnts_dc = np.array(xy)
-        self._interp_fnc_calib_pnts_dc = interp_fnc(self._calib_pnts_dc)
+        self._set_calib_pnts_dc(xy)
 
     def interp_fnc_calib_pnts_dc(self, mz: float) -> float:
         r"""
@@ -184,7 +193,8 @@ class Quadrupole(QSource3):
         :math:`m/z`
 
         :getter: Last value of :math:`m/z`
-        :setter: Set RF amplitude and DC difference according to given :math:`m/z` and internal state (
+        :setter: Set RF amplitude and DC difference according to given :math:`m/z` 
+                 and internal state (
                  :attr:`is_dc_on`,
                  :attr:`is_rod_polarity_positive`,
                  :attr:`calib_pnts_dc`,
@@ -199,7 +209,7 @@ class Quadrupole(QSource3):
             mz = 0
         U, V = self.calc_uv(mz)
         self.set_uv(U, V)
-        _mz = mz
+        self._mz = mz
 
     @property
     def is_rod_polarity_positive(self)->bool:
@@ -242,8 +252,8 @@ class Quadrupole(QSource3):
         :param mz: :math:`m/z`
         :returns: (:math:`U_{\text{diff}}`, :math:`V`)
         """
-        v = self._rfFactor * (1.0 + interp(mz, self._calib_pnts_rf)) * mz
-        u = self._dcFactor * (1.0 + interp(mz, self._calib_pnts_dc)) * v
+        v = self._rfFactor * (1.0 + self.interp_fnc_calib_pnts_rf(mz)) * mz
+        u = self._dcFactor * (1.0 + self.interp_fnc_calib_pnts_dc(mz)) * v
         return u, v
 
     def set_uv(self, u: float, v: float):
