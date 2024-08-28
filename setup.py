@@ -8,8 +8,8 @@ setup(
     description='Python library for controlling quadrupole mass filter RF generator QSource3 by Janascard.',
     packages=find_packages(),
     install_requires=[
-        scipy,
-        pymeasure
+        "scipy",
+        "pymeasure"
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
