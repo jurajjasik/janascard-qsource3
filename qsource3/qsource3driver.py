@@ -11,7 +11,7 @@ class QSource3Driver(Instrument):
     """
 
     MAX_RF_AMP_PP = 650.0  # Volts peak-to-peak
-    MAX_DC = 75.0  # Volts
+    MAX_DC = 100.0  # Volts
     
     def __init__(self, adapter, name="QSource3Driver", **kwargs):
         super().__init__(
