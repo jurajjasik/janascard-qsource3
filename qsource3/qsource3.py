@@ -1,5 +1,5 @@
 from pymeasure.instruments import Instrument
-from qsource3.qsource3driver import QSource3Driver
+from .qsource3driver import QSource3Driver
 
 
 class QSource3(Instrument):

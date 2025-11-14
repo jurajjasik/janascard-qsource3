@@ -2,8 +2,8 @@ import numpy as np
 from scipy import interpolate
 import scipy.constants as sc
 from pymeasure.instruments import Instrument
-from qsource3.qsource3driver import QSource3Driver
-from qsource3.qsource3 import QSource3
+from .qsource3driver import QSource3Driver
+from .qsource3 import QSource3
 
 
 def interp_fnc(xy):

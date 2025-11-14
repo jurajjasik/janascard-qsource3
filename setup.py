@@ -1,20 +1,8 @@
-from setuptools import setup, find_packages
+# setup.py
+# This file is kept for backward compatibility and development mode installation
+# The actual package configuration is in pyproject.toml
 
-setup(
-    name='janascard-qsource3',
-    version='0.1.0',
-    author='Juraj Jasik',
-    author_email='juraj.jasik@gmail.com',
-    description='Python library for controlling quadrupole mass filter RF generator QSource3 by Janascard.',
-    packages=find_packages(),
-    install_requires=[
-        "scipy",
-        "pymeasure"
-    ],
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.11',
-    ],
-)
+from setuptools import setup
+
+if __name__ == "__main__":
+    setup()

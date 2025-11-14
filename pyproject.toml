@@ -4,13 +4,36 @@ requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "qsource3"
-dynamic = ["version"]
+name = "janascard-qsource3"
+version = "0.1.1"
+description = "Python library for controlling quadrupole mass filter RF generator QSource3 by Janascard."
+authors = [
+    {name = "Juraj Jasik", email = "juraj.jasik@gmail.com"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
 dependencies = [
     "scipy",
     "pymeasure",
-#    "sphinx-autoapi",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 
-[tool.setuptools_scm]
-# write_to = "janascard-qsource3/_version.py"
+[project.urls]
+Homepage = "https://github.com/jurajjasik/janascard-qsource3"
+Documentation = "https://janascard-qsource3.readthedocs.io"
+Repository = "https://github.com/jurajjasik/janascard-qsource3"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["qsource3*"]
