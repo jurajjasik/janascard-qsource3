@@ -31,9 +31,9 @@ def test_dc1():
 def test_dc2():
     with expected_protocol(
         QSource3Driver,
-        [("#DC2 -75000", "OK")],
+        [("#DC2 -100000", "OK")],
     ) as inst:
-        inst.dc2 = -100.0
+        inst.dc2 = -150.0
 
 
 def test_ac():
